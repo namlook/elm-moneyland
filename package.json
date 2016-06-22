@@ -1,0 +1,28 @@
+{
+  "name": "elm-moneyland",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:backend": "node api.js",
+    "build:frontend": "webpack",
+    "watch:frontend": "webpack --watch",
+    "start:frontend": "webpack-dev-server --port 3000"
+  },
+  "keywords": [],
+  "author": "Namlook <n.namlook@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "css-loader": "^0.23.1",
+    "elm-webpack-loader": "^3.0.3",
+    "file-loader": "^0.8.5",
+    "font-awesome": "^4.6.3",
+    "json-server": "^0.8.14",
+    "semantic-ui-css": "^2.1.8",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.1",
+    "webpack-dev-middleware": "^1.6.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
