@@ -3,9 +3,10 @@ module Update exposing (..)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Expenses.Update
+import Expenses.Messages as ExpensesMessages
 import ExpenseForms.Update
 import ExpenseForms.Messages as ExpenseFormMsg
-import ExpenseForms.Models exposing (ExpenseForm)
+import ExpenseForms.Models exposing (ExpenseForm, expense2form)
 import Expenses.Models exposing (Expense)
 import String
 
@@ -17,7 +18,7 @@ toExpenseId id =
 
 form2expense : ExpenseForm -> Expense
 form2expense form =
-    { id = Just -1
+    { id = Just <| Result.withDefault -1 <| String.toInt form.id
     , title = form.title
     , date = form.date
     , amount = Result.withDefault 0 <| String.toFloat form.amount
@@ -27,26 +28,67 @@ form2expense form =
     }
 
 
+updateExpenses : List Expense -> Expense -> List Expense
+updateExpenses expenses newExpense =
+    if List.any (\expense -> expense.id == newExpense.id) expenses then
+        List.map
+            (\expense ->
+                if expense.id == newExpense.id then
+                    newExpense
+                else
+                    expense
+            )
+            expenses
+    else
+        newExpense :: expenses
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ExpensesMsg subMsg ->
-            let
-                ( updatedExpenses, cmd ) =
-                    Expenses.Update.update subMsg model.expenses
-            in
-                ( { model | expenses = updatedExpenses }, Cmd.map ExpensesMsg cmd )
+            case subMsg of
+                ExpensesMessages.Edit expense ->
+                    let
+                        form =
+                            expense2form expense
 
+                        expenseFormWidget =
+                            model.expenseFormWidget
+
+                        newModel =
+                            { model
+                                | expenseFormWidget =
+                                    { expenseFormWidget
+                                        | form = form
+                                        , show = True
+                                    }
+                            }
+                    in
+                        ( newModel, Cmd.none )
+
+        -- _ ->
+        --     let
+        --         ( updatedExpenses, cmd ) =
+        --             Expenses.Update.update subMsg model.expenses
+        --     in
+        --         ( { model | expenses = updatedExpenses }, Cmd.map ExpensesMsg cmd )
         ExpenseFormsMsg subMsg ->
             case subMsg of
-                ExpenseFormMsg.Save form ->
+                ExpenseFormMsg.Save formWidget ->
                     let
                         ( updatedExpenseForm, cmd ) =
-                            ExpenseForms.Update.update subMsg model.expenseForm
+                            ExpenseForms.Update.update subMsg model.expenseFormWidget
+
+                        expenses =
+                            model.expenses
+
+                        newExpense =
+                            form2expense formWidget.form
                     in
                         ( { model
-                            | expenses = [ form2expense form ] ++ model.expenses
-                            , expenseForm = updatedExpenseForm
+                            | expenses = updateExpenses expenses newExpense
+                            , expenseFormWidget = updatedExpenseForm
                           }
                         , Cmd.map ExpenseFormsMsg cmd
                         )
@@ -54,6 +96,6 @@ update msg model =
                 _ ->
                     let
                         ( updatedExpenseForm, cmd ) =
-                            ExpenseForms.Update.update subMsg model.expenseForm
+                            ExpenseForms.Update.update subMsg model.expenseFormWidget
                     in
-                        ( { model | expenseForm = updatedExpenseForm }, Cmd.map ExpenseFormsMsg cmd )
+                        ( { model | expenseFormWidget = updatedExpenseForm }, Cmd.map ExpenseFormsMsg cmd )

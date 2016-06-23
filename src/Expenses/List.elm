@@ -26,7 +26,7 @@ viewHeader fields =
 
 viewRow : Expense -> Html Msg
 viewRow expense =
-    tr [ onClick <| Edit expense.id ]
+    tr [ onClick (Edit expense) ]
         [ td [] [ text expense.title ]
         , td [] [ text <| toString expense.date ]
         , td [] [ text <| toString expense.amount ]

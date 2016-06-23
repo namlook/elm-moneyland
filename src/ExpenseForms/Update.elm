@@ -1,29 +1,47 @@
 module ExpenseForms.Update exposing (..)
 
-import ExpenseForms.Models exposing (ExpenseForm)
+import ExpenseForms.Models exposing (ExpenseFormWidget, expense2form)
 import ExpenseForms.Messages exposing (Msg(..))
 
 
-update : Msg -> ExpenseForm -> ( ExpenseForm, Cmd Msg )
-update msg form =
-    case msg of
-        TitleChange title ->
-            ( { form | title = title }, Cmd.none )
+update : Msg -> ExpenseFormWidget -> ( ExpenseFormWidget, Cmd Msg )
+update msg formWidget =
+    let
+        form =
+            formWidget.form
+    in
+        case msg of
+            TitleChange title ->
+                ( { formWidget | form = { form | title = title } }, Cmd.none )
 
-        DateChange date ->
-            ( { form | date = date }, Cmd.none )
+            DateChange date ->
+                ( { formWidget | form = { form | date = date } }, Cmd.none )
 
-        AmountChange amount ->
-            ( { form | amount = amount }, Cmd.none )
+            AmountChange amount ->
+                ( { formWidget | form = { form | amount = amount } }, Cmd.none )
 
-        ForChange for ->
-            ( { form | for = for }, Cmd.none )
+            ForChange for ->
+                ( { formWidget | form = { form | for = for } }, Cmd.none )
 
-        PaidByChange paidBy ->
-            ( { form | paidBy = paidBy }, Cmd.none )
+            PaidByChange paidBy ->
+                ( { formWidget | form = { form | paidBy = paidBy } }, Cmd.none )
 
-        CategoriesChange categories ->
-            ( { form | categories = categories }, Cmd.none )
+            CategoriesChange categories ->
+                ( { formWidget | form = { form | categories = categories } }, Cmd.none )
 
-        Save form ->
-            ( ExpenseForms.Models.initModel, Cmd.none )
+            Save form ->
+                ( { formWidget | form = ExpenseForms.Models.initExpenseForm }, Cmd.none )
+
+            ToggleForm ->
+                ( { formWidget | show = not formWidget.show }, Cmd.none )
+
+            UpdateForm expense ->
+                ( { formWidget | form = expense2form expense }, Cmd.none )
+
+            Cancel ->
+                ( { formWidget
+                    | form = ExpenseForms.Models.initExpenseForm
+                    , show = False
+                  }
+                , Cmd.none
+                )

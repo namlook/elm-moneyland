@@ -1,6 +1,7 @@
 module ExpenseForms.Messages exposing (..)
 
-import ExpenseForms.Models exposing (ExpenseForm)
+import Expenses.Models exposing (Expense)
+import ExpenseForms.Models exposing (ExpenseFormWidget)
 
 
 type Msg
@@ -10,4 +11,7 @@ type Msg
     | PaidByChange String
     | DateChange String
     | CategoriesChange String
-    | Save ExpenseForm
+    | UpdateForm Expense
+    | Save ExpenseFormWidget
+    | Cancel
+    | ToggleForm

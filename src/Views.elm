@@ -11,6 +11,6 @@ import ExpenseForms.Form
 view : Model -> Html Msg
 view model =
     div []
-        [ Html.App.map ExpenseFormsMsg (ExpenseForms.Form.view model.expenseForm)
+        [ Html.App.map ExpenseFormsMsg (ExpenseForms.Form.view model.expenseFormWidget)
         , Html.App.map ExpensesMsg (Expenses.List.view model.expenses)
         ]
