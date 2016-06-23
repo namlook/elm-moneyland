@@ -1,7 +1,7 @@
 module Models exposing (..)
 
 import Expenses.Models exposing (Expense)
-import ExpenseForms.Models exposing (ExpenseFormWidget)
+import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
 
 
 type alias Model =
@@ -24,5 +24,5 @@ expenses =
 initModel : Model
 initModel =
     { expenses = expenses
-    , expenseFormWidget = ExpenseForms.Models.initModel
+    , expenseFormWidget = ExpenseFormWidgets.Models.initModel
     }

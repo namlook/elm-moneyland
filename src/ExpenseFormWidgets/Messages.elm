@@ -1,7 +1,7 @@
-module ExpenseForms.Messages exposing (..)
+module ExpenseFormWidgets.Messages exposing (..)
 
 import Expenses.Models exposing (Expense)
-import ExpenseForms.Models exposing (ExpenseFormWidget)
+import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
 
 
 type Msg

@@ -6,7 +6,7 @@ import Html.App as App
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Expenses.List
-import ExpenseForms.Form
+import ExpenseFormWidgets.Form
 import Components.NavBar as NavBar
 
 
@@ -14,6 +14,6 @@ view : Model -> Html Msg
 view model =
     div [ class "mainapp" ]
         [ App.map NavBarMsg NavBar.view
-        , App.map ExpenseFormsMsg (ExpenseForms.Form.view model.expenseFormWidget)
+        , App.map ExpenseFormsMsg (ExpenseFormWidgets.Form.view model.expenseFormWidget)
         , App.map ExpensesMsg (Expenses.List.view model.expenses)
         ]

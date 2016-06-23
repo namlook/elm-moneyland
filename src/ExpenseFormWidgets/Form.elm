@@ -1,10 +1,10 @@
-module ExpenseForms.Form exposing (..)
+module ExpenseFormWidgets.Form exposing (..)
 
 import Html exposing (Html, Attribute, div, text, label, input, form, button, a, i)
 import Html.Attributes exposing (class, type', placeholder, value, hidden, classList)
 import Html.Events exposing (onInput, onClick)
-import ExpenseForms.Messages exposing (Msg(..))
-import ExpenseForms.Models exposing (ExpenseFormWidget)
+import ExpenseFormWidgets.Messages exposing (Msg(..))
+import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
 
 
 labeledInput : (String -> Msg) -> String -> String -> String -> Html Msg

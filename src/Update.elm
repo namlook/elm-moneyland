@@ -3,9 +3,9 @@ module Update exposing (..)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Expenses.Messages
-import ExpenseForms.Update
-import ExpenseForms.Messages
-import ExpenseForms.Models exposing (ExpenseForm, expense2form)
+import ExpenseFormWidgets.Update
+import ExpenseFormWidgets.Messages
+import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
 import Expenses.Models exposing (Expense)
 import Components.NavBar
 import String
@@ -51,7 +51,7 @@ update msg model =
                 Components.NavBar.AddExpense ->
                     let
                         ( updatedModel, cmd ) =
-                            ExpenseForms.Update.update ExpenseForms.Messages.ToggleForm model.expenseFormWidget
+                            ExpenseFormWidgets.Update.update ExpenseFormWidgets.Messages.ToggleForm model.expenseFormWidget
                     in
                         ( { model | expenseFormWidget = updatedModel }, Cmd.map ExpenseFormsMsg cmd )
 
@@ -85,10 +85,10 @@ update msg model =
         --         ( { model | expenses = updatedExpenses }, Cmd.map ExpensesMsg cmd )
         ExpenseFormsMsg subMsg ->
             case subMsg of
-                ExpenseForms.Messages.Save formWidget ->
+                ExpenseFormWidgets.Messages.Save formWidget ->
                     let
                         ( updatedExpenseForm, cmd ) =
-                            ExpenseForms.Update.update subMsg model.expenseFormWidget
+                            ExpenseFormWidgets.Update.update subMsg model.expenseFormWidget
 
                         expenses =
                             model.expenses
@@ -106,6 +106,6 @@ update msg model =
                 _ ->
                     let
                         ( updatedExpenseForm, cmd ) =
-                            ExpenseForms.Update.update subMsg model.expenseFormWidget
+                            ExpenseFormWidgets.Update.update subMsg model.expenseFormWidget
                     in
                         ( { model | expenseFormWidget = updatedExpenseForm }, Cmd.map ExpenseFormsMsg cmd )

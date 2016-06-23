@@ -1,7 +1,7 @@
-module ExpenseForms.Update exposing (..)
+module ExpenseFormWidgets.Update exposing (..)
 
-import ExpenseForms.Models exposing (ExpenseFormWidget, expense2form)
-import ExpenseForms.Messages exposing (Msg(..))
+import ExpenseFormWidgets.Models exposing (ExpenseFormWidget, expense2form)
+import ExpenseFormWidgets.Messages exposing (Msg(..))
 
 
 update : Msg -> ExpenseFormWidget -> ( ExpenseFormWidget, Cmd Msg )
@@ -30,7 +30,7 @@ update msg formWidget =
                 ( { formWidget | form = { form | categories = categories } }, Cmd.none )
 
             Save form ->
-                ( { formWidget | form = ExpenseForms.Models.initExpenseForm }, Cmd.none )
+                ( { formWidget | form = ExpenseFormWidgets.Models.initExpenseForm }, Cmd.none )
 
             ToggleForm ->
                 ( { formWidget | show = not formWidget.show }, Cmd.none )
@@ -40,7 +40,7 @@ update msg formWidget =
 
             Cancel ->
                 ( { formWidget
-                    | form = ExpenseForms.Models.initExpenseForm
+                    | form = ExpenseFormWidgets.Models.initExpenseForm
                     , show = False
                   }
                 , Cmd.none

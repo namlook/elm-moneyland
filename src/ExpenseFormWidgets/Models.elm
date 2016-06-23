@@ -1,4 +1,4 @@
-module ExpenseForms.Models exposing (..)
+module ExpenseFormWidgets.Models exposing (..)
 
 import String
 import Expenses.Models exposing (Expense)
