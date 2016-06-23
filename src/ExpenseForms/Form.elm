@@ -21,30 +21,10 @@ labeledInput inputMsg labelText fieldtype val =
         ]
 
 
-uiLabeledButton : List (Attribute Msg) -> String -> String -> Html Msg
-uiLabeledButton attributes iconName textLabel =
-    button ([ class "ui right labeled icon button" ] ++ attributes)
-        [ text textLabel
-        , i [ class (iconName ++ " icon") ] []
-        ]
-
-
-uiToggleFormButton : Bool -> Html Msg
-uiToggleFormButton showForm =
-    button
-        [ class "ui labeled basic icon button"
-        , onClick ToggleForm
-        ]
-        [ text "add expense"
-        , i [ class "icon plus" ] []
-        ]
-
-
 view : ExpenseFormWidget -> Html Msg
 view model =
     div []
-        [ div [ hidden (model.show) ] [ uiToggleFormButton model.show ]
-        , div [ class "ui segment", hidden (not model.show) ]
+        [ div [ class "ui segment", hidden (not model.show) ]
             [ div [ (class "ui form expense-form") ]
                 [ div []
                     [ labeledInput TitleChange "title" "text" model.form.title

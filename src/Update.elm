@@ -2,12 +2,12 @@ module Update exposing (..)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Expenses.Update
-import Expenses.Messages as ExpensesMessages
+import Expenses.Messages
 import ExpenseForms.Update
-import ExpenseForms.Messages as ExpenseFormMsg
+import ExpenseForms.Messages
 import ExpenseForms.Models exposing (ExpenseForm, expense2form)
 import Expenses.Models exposing (Expense)
+import Components.NavBar
 import String
 
 
@@ -46,9 +46,19 @@ updateExpenses expenses newExpense =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NavBarMsg subMsg ->
+            case subMsg of
+                Components.NavBar.AddExpense ->
+                    let
+                        ( updatedModel, cmd ) =
+                            ExpenseForms.Update.update ExpenseForms.Messages.ToggleForm model.expenseFormWidget
+                    in
+                        ( { model | expenseFormWidget = updatedModel }, Cmd.map ExpenseFormsMsg cmd )
+
+        -- ( Debug.log "add expense" model, Cmd.none )
         ExpensesMsg subMsg ->
             case subMsg of
-                ExpensesMessages.Edit expense ->
+                Expenses.Messages.Edit expense ->
                     let
                         form =
                             expense2form expense
@@ -75,7 +85,7 @@ update msg model =
         --         ( { model | expenses = updatedExpenses }, Cmd.map ExpensesMsg cmd )
         ExpenseFormsMsg subMsg ->
             case subMsg of
-                ExpenseFormMsg.Save formWidget ->
+                ExpenseForms.Messages.Save formWidget ->
                     let
                         ( updatedExpenseForm, cmd ) =
                             ExpenseForms.Update.update subMsg model.expenseFormWidget

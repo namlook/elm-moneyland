@@ -1,16 +1,19 @@
 module Views exposing (..)
 
 import Html exposing (Html, div, text)
-import Html.App
+import Html.Attributes exposing (class)
+import Html.App as App
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Expenses.List
 import ExpenseForms.Form
+import Components.NavBar as NavBar
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ Html.App.map ExpenseFormsMsg (ExpenseForms.Form.view model.expenseFormWidget)
-        , Html.App.map ExpensesMsg (Expenses.List.view model.expenses)
+    div [ class "mainapp" ]
+        [ App.map NavBarMsg NavBar.view
+        , App.map ExpenseFormsMsg (ExpenseForms.Form.view model.expenseFormWidget)
+        , App.map ExpensesMsg (Expenses.List.view model.expenses)
         ]
