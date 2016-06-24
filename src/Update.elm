@@ -9,6 +9,7 @@ import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
 import Expenses.Models exposing (Expense)
 import Components.NavBar
 import String
+import Date
 
 
 toExpenseId : String -> Maybe Int
@@ -20,7 +21,7 @@ form2expense : ExpenseForm -> Expense
 form2expense form =
     { id = Just <| Result.withDefault -1 <| String.toInt form.id
     , title = form.title
-    , date = form.date
+    , date = Date.fromString form.date |> Result.withDefault (Date.fromTime 0)
     , amount = Result.withDefault 0 <| String.toFloat form.amount
     , for = String.split "," form.for
     , paidBy = form.paidBy
@@ -55,7 +56,6 @@ update msg model =
                     in
                         ( { model | expenseFormWidget = updatedModel }, Cmd.map ExpenseFormsMsg cmd )
 
-        -- ( Debug.log "add expense" model, Cmd.none )
         ExpensesMsg subMsg ->
             case subMsg of
                 Expenses.Messages.Edit expense ->
@@ -71,6 +71,7 @@ update msg model =
                                 | expenseFormWidget =
                                     { expenseFormWidget
                                         | form = form
+                                        , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
                                         , show = True
                                     }
                             }

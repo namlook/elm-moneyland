@@ -28,7 +28,7 @@ view model =
             [ div [ (class "ui form expense-form") ]
                 [ div []
                     [ labeledInput TitleChange "title" "text" model.form.title
-                    , labeledInput DateChange "date" "text" model.form.date
+                    , labeledInput DateChange "date" "date" model.form.date
                     , labeledInput AmountChange "amount" "number" model.form.amount
                     , labeledInput ForChange "for" "text" model.form.for
                     , labeledInput PaidByChange "paidBy" "text" model.form.paidBy

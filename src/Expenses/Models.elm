@@ -1,6 +1,6 @@
 module Expenses.Models exposing (..)
 
--- import Date exposing (Date)
+import Date exposing (Date)
 
 
 type alias User =
@@ -17,9 +17,7 @@ type alias ExpenseId =
 
 type alias Expense =
     { id : ExpenseId
-    , date :
-        String
-        -- TODO Date
+    , date : Date
     , title : String
     , amount : Float
     , for : List User

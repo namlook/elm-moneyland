@@ -30,13 +30,32 @@ update msg formWidget =
                 ( { formWidget | form = { form | categories = categories } }, Cmd.none )
 
             Save form ->
-                ( { formWidget | form = ExpenseFormWidgets.Models.initExpenseForm }, Cmd.none )
+                ( { formWidget
+                    | form = ExpenseFormWidgets.Models.initExpenseForm
+                    , show =
+                        (case form.display of
+                            ExpenseFormWidgets.Models.Opened (ExpenseFormWidgets.Models.New) ->
+                                True
+
+                            _ ->
+                                False
+                        )
+                  }
+                , Cmd.none
+                )
 
             ToggleForm ->
-                ( { formWidget | show = not formWidget.show }, Cmd.none )
-
-            UpdateForm expense ->
-                ( { formWidget | form = expense2form expense }, Cmd.none )
+                ( { formWidget
+                    | display =
+                        (if formWidget.show then
+                            ExpenseFormWidgets.Models.Closed
+                         else
+                            ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.New
+                        )
+                    , show = not formWidget.show
+                  }
+                , Cmd.none
+                )
 
             Cancel ->
                 ( { formWidget
