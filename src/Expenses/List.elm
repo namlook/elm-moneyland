@@ -1,6 +1,6 @@
 module Expenses.List exposing (..)
 
-import Html exposing (Html, div, text, table, thead, tbody, tr, td, th, input, form, label)
+import Html exposing (Html, div, text, table, thead, tbody, tr, td, th, input, form, a, i, label)
 import Html.Attributes exposing (class, type')
 import Html.Events exposing (onClick)
 import Expenses.Models exposing (Expense)
@@ -21,26 +21,34 @@ view expenses =
 viewHeader : List String -> Html Msg
 viewHeader fields =
     thead []
-        (List.map (\field -> th [] [ text field ]) fields)
+        ([ th [] [] ]
+            ++ (List.map (\field -> th [] [ text field ]) fields)
+        )
 
 
-beautifyDate : String -> String
-beautifyDate datestring =
-    let
-        date =
-            Result.withDefault (Date.fromTime 0) (Date.fromString datestring)
-    in
-        (toString <| Date.day date)
-            ++ "/"
-            ++ (toString <| Date.month date)
-            ++ "/"
-            ++ (toString <| Date.year date)
+beautifyDate : Date -> String
+beautifyDate date =
+    -- let
+    --     date =
+    --         Result.withDefault (Date.fromTime 0) (Date.fromString datestring)
+    -- in
+    (toString <| Date.day date)
+        ++ "/"
+        ++ (toString <| Date.month date)
+        ++ "/"
+        ++ (toString <| Date.year date)
+
+
+editIcon : Expense -> Html Msg
+editIcon expense =
+    a [ class "ui labeled button", onClick (Edit expense) ] [ i [ class "ui edit icon" ] [] ]
 
 
 viewRow : Expense -> Html Msg
 viewRow expense =
-    tr [ onClick (Edit expense) ]
-        [ td [] [ text expense.title ]
+    tr []
+        [ td [] [ editIcon expense ]
+        , td [] [ text expense.title ]
         , td [] [ text <| beautifyDate expense.date ]
         , td [] [ text <| toString expense.amount ]
         , td [] [ text <| toString expense.for ]
