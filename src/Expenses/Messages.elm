@@ -1,7 +1,9 @@
 module Expenses.Messages exposing (..)
 
-import Expenses.Models exposing (Expense)
+import Types exposing (Expense)
+import Expenses.Models exposing (SortOrder)
 
 
 type Msg
     = Edit Expense
+    | ToggleSorting String

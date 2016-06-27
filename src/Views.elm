@@ -15,5 +15,5 @@ view model =
     div [ class "mainapp" ]
         [ App.map NavBarMsg NavBar.view
         , App.map ExpenseFormsMsg (ExpenseFormWidgets.Form.view model.expenseFormWidget)
-        , App.map ExpensesMsg (Expenses.List.view model.expenses)
+        , App.map ExpensesMsg (Expenses.List.view model.expensesListWidget)
         ]

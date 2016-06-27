@@ -1,28 +1,57 @@
 module Expenses.List exposing (..)
 
 import Html exposing (Html, div, text, table, thead, tbody, tr, td, th, input, form, a, i, label)
-import Html.Attributes exposing (class, type')
+import Html.Attributes exposing (class, type', classList)
 import Html.Events exposing (onClick)
-import Expenses.Models exposing (Expense)
+import Types exposing (Expense)
+import Expenses.Models exposing (ExpensesListWidget, Sorting(..), SortOrder(..))
 import Expenses.Messages exposing (Msg(..))
 import Date exposing (Date)
+import String
 
 
-view : List Expense -> Html Msg
-view expenses =
+view : ExpensesListWidget -> Html Msg
+view widget =
     div []
-        [ table [ class "ui celled striped padded table" ]
-            [ viewHeader [ "title", "date", "amount", "for", "paid by", "categories" ]
-            , tbody [] (List.map viewRow expenses)
+        [ table [ class "ui celled sortable striped padded table" ]
+            [ viewHeader widget [ "title", "date", "amount", "for", "paid by", "categories" ]
+            , tbody [] (List.map viewRow widget.expenses)
             ]
         ]
 
 
-viewHeader : List String -> Html Msg
-viewHeader fields =
+sortingClass : String -> ExpensesListWidget -> String
+sortingClass fieldname widget =
+    case widget.sortBy of
+        SortingField sortingField ->
+            if sortingField == fieldname then
+                case widget.order of
+                    Asc ->
+                        "sorted ascending"
+
+                    Desc ->
+                        "sorted descending"
+            else
+                ""
+
+        NoSorting ->
+            ""
+
+
+viewHeader : ExpensesListWidget -> List String -> Html Msg
+viewHeader widget fields =
     thead []
         ([ th [] [] ]
-            ++ (List.map (\field -> th [] [ text field ]) fields)
+            ++ (List.map
+                    (\field ->
+                        th
+                            [ onClick (ToggleSorting field)
+                            , class (sortingClass field widget)
+                            ]
+                            [ text field ]
+                    )
+                    fields
+               )
         )
 
 
@@ -51,7 +80,7 @@ viewRow expense =
         , td [] [ text expense.title ]
         , td [] [ text <| beautifyDate expense.date ]
         , td [] [ text <| toString expense.amount ]
-        , td [] [ text <| toString expense.for ]
+        , td [] [ text <| String.join "," expense.for ]
         , td [] [ text <| toString expense.paidBy ]
-        , td [] [ text <| toString expense.categories ]
+        , td [] [ text <| String.join "," expense.categories ]
         ]

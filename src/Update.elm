@@ -3,10 +3,11 @@ module Update exposing (..)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Expenses.Messages
+import Expenses.Update
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
-import Expenses.Models exposing (Expense)
+import Types exposing (Expense)
 import Components.NavBar
 import String
 import Date
@@ -78,12 +79,13 @@ update msg model =
                     in
                         ( newModel, Cmd.none )
 
-        -- _ ->
-        --     let
-        --         ( updatedExpenses, cmd ) =
-        --             Expenses.Update.update subMsg model.expenses
-        --     in
-        --         ( { model | expenses = updatedExpenses }, Cmd.map ExpensesMsg cmd )
+                _ ->
+                    let
+                        ( updatedExpenses, cmd ) =
+                            Expenses.Update.update subMsg model.expensesListWidget
+                    in
+                        ( { model | expensesListWidget = updatedExpenses }, Cmd.map ExpensesMsg cmd )
+
         ExpenseFormsMsg subMsg ->
             case subMsg of
                 ExpenseFormWidgets.Messages.Save formWidget ->
@@ -91,14 +93,17 @@ update msg model =
                         ( updatedExpenseForm, cmd ) =
                             ExpenseFormWidgets.Update.update subMsg model.expenseFormWidget
 
-                        expenses =
-                            model.expenses
+                        expensesListWidget =
+                            model.expensesListWidget
 
                         newExpense =
                             form2expense formWidget.form
                     in
                         ( { model
-                            | expenses = updateExpenses expenses newExpense
+                            | expensesListWidget =
+                                { expensesListWidget
+                                    | expenses = updateExpenses expensesListWidget.expenses newExpense
+                                }
                             , expenseFormWidget = updatedExpenseForm
                           }
                         , Cmd.map ExpenseFormsMsg cmd

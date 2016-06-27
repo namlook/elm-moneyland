@@ -1,7 +1,7 @@
 module ExpenseFormWidgets.Models exposing (..)
 
 import String
-import Expenses.Models exposing (Expense)
+import Types exposing (Expense)
 import Date exposing (Date)
 
 
