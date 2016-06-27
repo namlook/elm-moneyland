@@ -1,10 +1,11 @@
 module ExpenseFormWidgets.Update exposing (..)
 
 import ExpenseFormWidgets.Models exposing (ExpenseFormWidget, expense2form)
-import ExpenseFormWidgets.Messages exposing (Msg(..))
+import ExpenseFormWidgets.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..))
+import ExpenseFormWidgets.Translator exposing (generateParentMsg)
 
 
-update : Msg -> ExpenseFormWidget -> ( ExpenseFormWidget, Cmd Msg )
+update : InternalMsg -> ExpenseFormWidget -> ( ExpenseFormWidget, Cmd Msg )
 update msg formWidget =
     let
         form =
@@ -41,7 +42,7 @@ update msg formWidget =
                                 False
                         )
                   }
-                , Cmd.none
+                , generateParentMsg (SaveExpense formWidget)
                 )
 
             ToggleForm ->

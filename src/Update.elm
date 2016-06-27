@@ -6,7 +6,7 @@ import Messages exposing (Msg(..))
 
 -- import ExpensesListWidget.Messages
 
-import Translator exposing (expensesListWidgetTranslator)
+import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
 import ExpensesListWidget.Update
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
@@ -59,7 +59,7 @@ update msg model =
                         ( updatedModel, cmd ) =
                             ExpenseFormWidgets.Update.update ExpenseFormWidgets.Messages.ToggleForm model.expenseFormWidget
                     in
-                        ( { model | expenseFormWidget = updatedModel }, Cmd.map ExpenseFormsMsg cmd )
+                        ( { model | expenseFormWidget = updatedModel }, Cmd.map expenseFormWidgetTranslator cmd )
 
         ExpensesListWidgetMsg internal ->
             let
@@ -88,61 +88,26 @@ update msg model =
             in
                 ( newModel, Cmd.none )
 
-        -- ExpensesMsg subMsg ->
-        --     case subMsg of
-        --         ExpensesListWidget.Messages.Edit expense ->
-        --             let
-        --                 form =
-        --                     expense2form expense
-        --
-        --                 expenseFormWidget =
-        --                     model.expenseFormWidget
-        --
-        --                 newModel =
-        --                     { model
-        --                         | expenseFormWidget =
-        --                             { expenseFormWidget
-        --                                 | form = form
-        --                                 , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
-        --                                 , show = True
-        --                             }
-        --                     }
-        --             in
-        --                 ( newModel, Cmd.none )
-        --
-        --         _ ->
-        --             let
-        --                 ( updatedExpenses, cmd ) =
-        --                     ExpensesListWidget.Update.update subMsg model.expensesListWidget
-        --             in
-        --                 ( { model | expensesListWidget = updatedExpenses }, Cmd.map ExpensesMsg cmd )
-        --
-        ExpenseFormsMsg subMsg ->
-            case subMsg of
-                ExpenseFormWidgets.Messages.Save formWidget ->
-                    let
-                        ( updatedExpenseForm, cmd ) =
-                            ExpenseFormWidgets.Update.update subMsg model.expenseFormWidget
+        ExpenseFormWidgetMsg internal ->
+            let
+                ( widget, cmd ) =
+                    ExpenseFormWidgets.Update.update internal model.expenseFormWidget
+            in
+                ( { model | expenseFormWidget = widget }, Cmd.map expenseFormWidgetTranslator cmd )
 
-                        expensesListWidget =
-                            model.expensesListWidget
+        Save formWidget ->
+            let
+                expensesListWidget =
+                    model.expensesListWidget
 
-                        newExpense =
-                            form2expense formWidget.form
-                    in
-                        ( { model
-                            | expensesListWidget =
-                                { expensesListWidget
-                                    | expenses = updateExpenses expensesListWidget.expenses newExpense
-                                }
-                            , expenseFormWidget = updatedExpenseForm
-                          }
-                        , Cmd.map ExpenseFormsMsg cmd
-                        )
-
-                _ ->
-                    let
-                        ( updatedExpenseForm, cmd ) =
-                            ExpenseFormWidgets.Update.update subMsg model.expenseFormWidget
-                    in
-                        ( { model | expenseFormWidget = updatedExpenseForm }, Cmd.map ExpenseFormsMsg cmd )
+                newExpense =
+                    form2expense formWidget.form
+            in
+                ( { model
+                    | expensesListWidget =
+                        { expensesListWidget
+                            | expenses = updateExpenses expensesListWidget.expenses newExpense
+                        }
+                  }
+                , Cmd.none
+                )
