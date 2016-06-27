@@ -2,8 +2,8 @@ module Update exposing (..)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Expenses.Messages
-import Expenses.Update
+import ExpensesListWidget.Messages
+import ExpensesListWidget.Update
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
@@ -59,7 +59,7 @@ update msg model =
 
         ExpensesMsg subMsg ->
             case subMsg of
-                Expenses.Messages.Edit expense ->
+                ExpensesListWidget.Messages.Edit expense ->
                     let
                         form =
                             expense2form expense
@@ -82,7 +82,7 @@ update msg model =
                 _ ->
                     let
                         ( updatedExpenses, cmd ) =
-                            Expenses.Update.update subMsg model.expensesListWidget
+                            ExpensesListWidget.Update.update subMsg model.expensesListWidget
                     in
                         ( { model | expensesListWidget = updatedExpenses }, Cmd.map ExpensesMsg cmd )
 

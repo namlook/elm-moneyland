@@ -1,4 +1,4 @@
-module Expenses.Models exposing (..)
+module ExpensesListWidget.Models exposing (..)
 
 import Types exposing (Expense)
 import Date exposing (Date)

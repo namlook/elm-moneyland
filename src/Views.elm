@@ -5,7 +5,7 @@ import Html.Attributes exposing (class)
 import Html.App as App
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Expenses.List
+import ExpensesListWidget.List
 import ExpenseFormWidgets.Form
 import Components.NavBar as NavBar
 
@@ -15,5 +15,5 @@ view model =
     div [ class "mainapp" ]
         [ App.map NavBarMsg NavBar.view
         , App.map ExpenseFormsMsg (ExpenseFormWidgets.Form.view model.expenseFormWidget)
-        , App.map ExpensesMsg (Expenses.List.view model.expensesListWidget)
+        , App.map ExpensesMsg (ExpensesListWidget.List.view model.expensesListWidget)
         ]

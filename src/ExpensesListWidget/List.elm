@@ -1,11 +1,11 @@
-module Expenses.List exposing (..)
+module ExpensesListWidget.List exposing (..)
 
 import Html exposing (Html, div, text, table, thead, tbody, tr, td, th, input, form, a, i, label)
 import Html.Attributes exposing (class, type', classList)
 import Html.Events exposing (onClick)
 import Types exposing (Expense)
-import Expenses.Models exposing (ExpensesListWidget, Sorting(..), SortOrder(..))
-import Expenses.Messages exposing (Msg(..))
+import ExpensesListWidget.Models exposing (ExpensesListWidget, Sorting(..), SortOrder(..))
+import ExpensesListWidget.Messages exposing (Msg(..))
 import Date exposing (Date)
 import String
 

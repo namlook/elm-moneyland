@@ -1,9 +1,7 @@
-module Expenses.Update exposing (..)
+module ExpensesListWidget.Update exposing (..)
 
--- import Types exposing (Expense, ExpenseId)
-
-import Expenses.Messages exposing (Msg(..))
-import Expenses.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
+import ExpensesListWidget.Messages exposing (Msg(..))
+import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 
 
 switchOrder : ExpensesListWidget -> String -> SortOrder
