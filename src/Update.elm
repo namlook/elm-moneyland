@@ -2,7 +2,11 @@ module Update exposing (..)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import ExpensesListWidget.Messages
+
+
+-- import ExpensesListWidget.Messages
+
+import Translator exposing (expensesListWidgetTranslator)
 import ExpensesListWidget.Update
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
@@ -57,35 +61,62 @@ update msg model =
                     in
                         ( { model | expenseFormWidget = updatedModel }, Cmd.map ExpenseFormsMsg cmd )
 
-        ExpensesMsg subMsg ->
-            case subMsg of
-                ExpensesListWidget.Messages.Edit expense ->
-                    let
-                        form =
-                            expense2form expense
+        ExpensesListWidgetMsg internal ->
+            let
+                ( widget, cmd ) =
+                    ExpensesListWidget.Update.update internal model.expensesListWidget
+            in
+                ( { model | expensesListWidget = widget }, Cmd.map expensesListWidgetTranslator cmd )
 
-                        expenseFormWidget =
-                            model.expenseFormWidget
+        Edit expense ->
+            let
+                form =
+                    expense2form expense
 
-                        newModel =
-                            { model
-                                | expenseFormWidget =
-                                    { expenseFormWidget
-                                        | form = form
-                                        , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
-                                        , show = True
-                                    }
+                expenseFormWidget =
+                    model.expenseFormWidget
+
+                newModel =
+                    { model
+                        | expenseFormWidget =
+                            { expenseFormWidget
+                                | form = form
+                                , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
+                                , show = True
                             }
-                    in
-                        ( newModel, Cmd.none )
+                    }
+            in
+                ( newModel, Cmd.none )
 
-                _ ->
-                    let
-                        ( updatedExpenses, cmd ) =
-                            ExpensesListWidget.Update.update subMsg model.expensesListWidget
-                    in
-                        ( { model | expensesListWidget = updatedExpenses }, Cmd.map ExpensesMsg cmd )
-
+        -- ExpensesMsg subMsg ->
+        --     case subMsg of
+        --         ExpensesListWidget.Messages.Edit expense ->
+        --             let
+        --                 form =
+        --                     expense2form expense
+        --
+        --                 expenseFormWidget =
+        --                     model.expenseFormWidget
+        --
+        --                 newModel =
+        --                     { model
+        --                         | expenseFormWidget =
+        --                             { expenseFormWidget
+        --                                 | form = form
+        --                                 , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
+        --                                 , show = True
+        --                             }
+        --                     }
+        --             in
+        --                 ( newModel, Cmd.none )
+        --
+        --         _ ->
+        --             let
+        --                 ( updatedExpenses, cmd ) =
+        --                     ExpensesListWidget.Update.update subMsg model.expensesListWidget
+        --             in
+        --                 ( { model | expensesListWidget = updatedExpenses }, Cmd.map ExpensesMsg cmd )
+        --
         ExpenseFormsMsg subMsg ->
             case subMsg of
                 ExpenseFormWidgets.Messages.Save formWidget ->

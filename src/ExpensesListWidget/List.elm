@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, type', classList)
 import Html.Events exposing (onClick)
 import Types exposing (Expense)
 import ExpensesListWidget.Models exposing (ExpensesListWidget, Sorting(..), SortOrder(..))
-import ExpensesListWidget.Messages exposing (Msg(..))
+import ExpensesListWidget.Messages exposing (Msg(..), OutMsg(..), InternalMsg(..))
 import Date exposing (Date)
 import String
 
@@ -45,7 +45,7 @@ viewHeader widget fields =
             ++ (List.map
                     (\field ->
                         th
-                            [ onClick (ToggleSorting field)
+                            [ onClick (ForSelf (ToggleSorting field))
                             , class (sortingClass field widget)
                             ]
                             [ text field ]
@@ -70,7 +70,7 @@ beautifyDate date =
 
 editIcon : Expense -> Html Msg
 editIcon expense =
-    a [ class "ui labeled button", onClick (Edit expense) ] [ i [ class "ui edit icon" ] [] ]
+    a [ class "ui labeled button", onClick (ForParent (Edit expense)) ] [ i [ class "ui edit icon" ] [] ]
 
 
 viewRow : Expense -> Html Msg

@@ -1,6 +1,6 @@
 module ExpensesListWidget.Update exposing (..)
 
-import ExpensesListWidget.Messages exposing (Msg(..))
+import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..))
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 
 
@@ -20,13 +20,12 @@ switchOrder widget fieldname =
             Asc
 
 
-update : Msg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
+update : InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
 update msg model =
     case msg of
-        Edit expense ->
-            -- no-op : passed to parent
-            ( model, Cmd.none )
-
+        -- Edit expense ->
+        -- no-op : passed to parent
+        -- ( model, Cmd.none )
         ToggleSorting fieldname ->
             ( { model
                 | sortBy = SortingField fieldname
