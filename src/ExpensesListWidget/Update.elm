@@ -45,23 +45,26 @@ update msg model =
         -- no-op : passed to parent
         -- ( model, Cmd.none )
         ToggleSorting fieldname ->
-            let
-                sortBy =
-                    SortingField fieldname
+            if (List.all (\n -> n /= fieldname) [ "title", "amount", "date" ]) then
+                ( model, Cmd.none )
+            else
+                let
+                    sortBy =
+                        SortingField fieldname
 
-                order =
-                    switchOrder model fieldname
+                    order =
+                        switchOrder model fieldname
 
-                sortedExpenses =
-                    let
-                        list =
-                            sortByField fieldname model.expenses
-                    in
-                        case order of
-                            Desc ->
-                                List.reverse list
+                    sortedExpenses =
+                        let
+                            list =
+                                sortByField fieldname model.expenses
+                        in
+                            case order of
+                                Desc ->
+                                    List.reverse list
 
-                            Asc ->
-                                list
-            in
-                ( { model | expenses = sortedExpenses, sortBy = sortBy, order = order }, Cmd.none )
+                                Asc ->
+                                    list
+                in
+                    ( { model | expenses = sortedExpenses, sortBy = sortBy, order = order }, Cmd.none )
