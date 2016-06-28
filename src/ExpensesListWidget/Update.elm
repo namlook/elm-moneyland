@@ -4,6 +4,7 @@ import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 import Types exposing (Expense)
 import Date
+import ExpensesListWidget.Remote exposing (fetchExpensesBy)
 
 
 switchOrder : ExpensesListWidget -> String -> SortOrder
@@ -41,9 +42,16 @@ sortByField fieldname list =
 update : InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
 update msg model =
     case msg of
-        -- Edit expense ->
-        -- no-op : passed to parent
-        -- ( model, Cmd.none )
+        FetchExpensesDone expenses ->
+            ( { model | expenses = expenses }, Cmd.none )
+
+        FetchExpensesFail error ->
+            let
+                _ =
+                    Debug.log "fetch fail" error
+            in
+                ( model, Cmd.none )
+
         ToggleSorting fieldname ->
             if (List.all (\n -> n /= fieldname) [ "title", "amount", "date" ]) then
                 ( model, Cmd.none )
@@ -54,17 +62,7 @@ update msg model =
 
                     order =
                         switchOrder model fieldname
-
-                    sortedExpenses =
-                        let
-                            list =
-                                sortByField fieldname model.expenses
-                        in
-                            case order of
-                                Desc ->
-                                    List.reverse list
-
-                                Asc ->
-                                    list
                 in
-                    ( { model | expenses = sortedExpenses, sortBy = sortBy, order = order }, Cmd.none )
+                    ( { model | sortBy = sortBy, order = order }
+                    , Cmd.map ForSelf (fetchExpensesBy fieldname order)
+                    )
