@@ -2,6 +2,8 @@ module ExpensesListWidget.Update exposing (..)
 
 import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..))
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
+import Types exposing (Expense)
+import Date
 
 
 switchOrder : ExpensesListWidget -> String -> SortOrder
@@ -20,6 +22,22 @@ switchOrder widget fieldname =
             Asc
 
 
+sortByField : String -> List Expense -> List Expense
+sortByField fieldname list =
+    case fieldname of
+        "title" ->
+            List.sortBy .title list
+
+        "amount" ->
+            List.sortBy .amount list
+
+        "date" ->
+            List.sortBy (Date.toTime << .date) list
+
+        _ ->
+            list
+
+
 update : InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
 update msg model =
     case msg of
@@ -27,9 +45,23 @@ update msg model =
         -- no-op : passed to parent
         -- ( model, Cmd.none )
         ToggleSorting fieldname ->
-            ( { model
-                | sortBy = SortingField fieldname
-                , order = switchOrder model fieldname
-              }
-            , Cmd.none
-            )
+            let
+                sortBy =
+                    SortingField fieldname
+
+                order =
+                    switchOrder model fieldname
+
+                sortedExpenses =
+                    let
+                        list =
+                            sortByField fieldname model.expenses
+                    in
+                        case order of
+                            Desc ->
+                                List.reverse list
+
+                            Asc ->
+                                list
+            in
+                ( { model | expenses = sortedExpenses, sortBy = sortBy, order = order }, Cmd.none )
