@@ -100,9 +100,9 @@ expense2form expense =
     , title = expense.title
     , date = toRFC3339 expense.date
     , amount = toString expense.amount
-    , for = String.join ", " expense.for
+    , for = String.join ", " <| List.sort expense.for
     , paidBy = expense.paidBy
-    , categories = String.join ", " expense.categories
+    , categories = String.join ", " <| List.sort expense.categories
     }
 
 

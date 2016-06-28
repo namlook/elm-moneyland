@@ -28,9 +28,9 @@ form2expense form =
     , title = form.title
     , date = Date.fromString form.date |> Result.withDefault (Date.fromTime 0)
     , amount = Result.withDefault 0 <| String.toFloat form.amount
-    , for = String.split "," form.for
+    , for = List.sort <| String.split "," form.for
     , paidBy = form.paidBy
-    , categories = String.split "," form.categories
+    , categories = List.sort <| String.split "," form.categories
     }
 
 
@@ -47,6 +47,46 @@ updateExpenses expenses newExpense =
             expenses
     else
         newExpense :: expenses
+
+
+
+-- -- expensesListWidgetComponent =
+-- --     { update = ...
+-- --     , model = ...
+-- --     , translator = ...
+-- --     }
+-- -- updateComponent : ComponentInfos -> (a -> b) -> Model -> Msg
+-- -- updateComponent expensesListWidgetComponent .expensesListWidget model msg
+--
+--
+-- expensesListWidgetComponent =
+--     { update = ExpensesListWidget.Update.update
+--     , model = .expensesListWidget
+--     , translator = expensesListWidgetTranslator
+--     }
+--
+--
+-- expenseFormWidgetComponent =
+--     { update = ExpenseFormWidgets.Update.update
+--     , model = .expenseFormWidget
+--     , translator = expenseFormWidgetTranslator
+--     }
+--
+--
+-- updateComponent componentInfos setter model msg =
+--     let
+--         ( updatedModel, cmd ) =
+--             componentInfos.update msg (componentInfos.model model)
+--     in
+--         ( setter model updatedModel, Cmd.map componentInfos.translator cmd )
+--
+--
+-- updateExpensesListWidgetComponent =
+--     updateComponent expensesListWidgetComponent (\m u -> { m | expensesListWidget = u })
+--
+--
+-- updateExpenseFormWidgetComponent =
+--     updateComponent expenseFormWidgetComponent (\m u -> { m | expenseFormWidget = u })
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,9 +110,6 @@ update msg model =
 
         Edit expense ->
             let
-                form =
-                    expense2form expense
-
                 expenseFormWidget =
                     model.expenseFormWidget
 
@@ -80,7 +117,7 @@ update msg model =
                     { model
                         | expenseFormWidget =
                             { expenseFormWidget
-                                | form = form
+                                | form = expense2form expense
                                 , display = ExpenseFormWidgets.Models.Opened ExpenseFormWidgets.Models.Edit
                                 , show = True
                             }
