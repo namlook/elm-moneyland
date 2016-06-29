@@ -10,6 +10,9 @@
     "dependencies": {
         "elm-lang/core": "4.0.1 <= v < 5.0.0",
         "elm-lang/html": "1.0.0 <= v < 2.0.0",
+        "evancz/elm-http": "3.0.1 <= v < 4.0.0",
+        "jinjor/elm-time-travel": "1.0.7 <= v < 2.0.0",
+        "krisajenkins/elm-exts": "25.6.2 <= v < 26.0.0",
         "thebritican/elm-autocomplete": "3.3.0 <= v < 4.0.0"
     },
     "elm-version": "0.17.0 <= v < 0.18.0"
