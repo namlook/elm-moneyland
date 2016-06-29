@@ -5,17 +5,13 @@ import Models exposing (Model, initModel)
 import Messages exposing (Msg(..))
 import Views exposing (view)
 import Update exposing (update)
+import Subscriptions exposing (subscriptions)
 import ExpensesListWidget.Remote
 
 
 init : ( Model, Cmd Msg )
 init =
     ( initModel, Cmd.map ExpensesListWidgetMsg ExpensesListWidget.Remote.fetchAllExpenses )
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
 
 
 main : Program Never

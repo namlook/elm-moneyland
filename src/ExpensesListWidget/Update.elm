@@ -5,6 +5,7 @@ import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), So
 import Types exposing (Expense)
 import Date
 import ExpensesListWidget.Remote exposing (fetchExpensesBy)
+import ExpensesListWidget.Translator exposing (generateParentMsg)
 
 
 switchOrder : ExpensesListWidget -> String -> SortOrder
@@ -50,7 +51,7 @@ update msg model =
                 _ =
                     Debug.log "fetch fail" error
             in
-                ( model, Cmd.none )
+                ( model, generateParentMsg (FetchExpensesFailed error) )
 
         ToggleSorting fieldname ->
             if (List.all (\n -> n /= fieldname) [ "title", "amount", "date" ]) then

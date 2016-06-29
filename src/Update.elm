@@ -2,10 +2,6 @@ module Update exposing (..)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-
-
--- import ExpensesListWidget.Messages
-
 import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
 import ExpensesListWidget.Update
 import ExpenseFormWidgets.Update
@@ -13,8 +9,10 @@ import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
 import Types exposing (Expense)
 import Components.NavBar
+import Components.FlashMessages as FlashMessages
 import String
 import Date
+import Html exposing (text)
 
 
 toExpenseId : String -> Maybe Int
@@ -148,3 +146,26 @@ update msg model =
                   }
                 , Cmd.none
                 )
+
+        FetchExpensesFailed error ->
+            ( { model
+                | flashMessages =
+                    model.flashMessages
+                        ++ [ { type' = FlashMessages.Error
+                             , dismissable = True
+                             , icon = Just "remove"
+                             , title = "Can't fetch expenses"
+                             , shownFor = Nothing
+                             , body = Just (text <| toString error)
+                             }
+                           ]
+              }
+            , Cmd.none
+            )
+
+        FlashMessagesMsg internal ->
+            let
+                ( queue, cmd ) =
+                    FlashMessages.update internal model.flashMessages
+            in
+                ( { model | flashMessages = queue }, Cmd.map FlashMessagesMsg cmd )

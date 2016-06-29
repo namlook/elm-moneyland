@@ -12,6 +12,7 @@ type InternalMsg
 
 type OutMsg
     = Edit Expense
+    | FetchExpensesFailed Http.Error
 
 
 type Msg
