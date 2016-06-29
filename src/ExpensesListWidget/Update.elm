@@ -4,7 +4,7 @@ import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 import Types exposing (Expense)
 import Date
-import ExpensesListWidget.Remote exposing (fetchExpensesBy, deleteExpense)
+import ExpensesListWidget.Commandes exposing (fetchExpensesBy, deleteExpense)
 import ExpensesListWidget.Translator exposing (generateParentMsg)
 
 

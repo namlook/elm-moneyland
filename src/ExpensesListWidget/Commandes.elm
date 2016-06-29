@@ -1,21 +1,15 @@
-module ExpensesListWidget.Remote exposing (..)
+module ExpensesListWidget.Commandes exposing (..)
 
-import Types exposing (Expense)
 import Task
 import Http
-import Json.Decode as Decode exposing ((:=))
 import ExpensesListWidget.Messages exposing (InternalMsg(..))
 import ExpensesListWidget.Models exposing (SortOrder(..), Sorting(..))
-
-
--- import Json.Encode as Encode
-
-import Date exposing (Date)
+import ExpensesListWidget.Json exposing (fetchExpensesDecoder, deleteExpenseDecoder)
 
 
 fetchExpenses : String -> Cmd InternalMsg
 fetchExpenses url =
-    Http.get collectionDecoder url
+    Http.get fetchExpensesDecoder url
         |> Task.perform FetchExpensesFail FetchExpensesDone
 
 
@@ -56,25 +50,3 @@ deleteExpense expenseId =
     Http.send Http.defaultSettings (deleteExpenseRequest ("http://localhost:4000/expenses/" ++ (toString expenseId)))
         |> Http.fromJson deleteExpenseDecoder
         |> Task.perform DeleteExpenseFail DeleteExpenseDone
-
-
-deleteExpenseDecoder : Decode.Decoder {}
-deleteExpenseDecoder =
-    Decode.succeed {}
-
-
-collectionDecoder : Decode.Decoder (List Expense)
-collectionDecoder =
-    Decode.list recordDecoder
-
-
-recordDecoder : Decode.Decoder Expense
-recordDecoder =
-    Decode.object7 Expense
-        ("id" := Decode.maybe Decode.int)
-        ("date" := Decode.customDecoder Decode.string Date.fromString)
-        ("title" := Decode.string)
-        ("amount" := Decode.float)
-        ("for" := Decode.list Decode.string)
-        ("paidBy" := Decode.string)
-        ("categories" := Decode.list Decode.string)
