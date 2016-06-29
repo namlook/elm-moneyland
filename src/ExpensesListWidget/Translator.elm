@@ -9,7 +9,7 @@ import Http
 type alias TranslationDictionary parentMsg =
     { onInternalMessage : InternalMsg -> parentMsg
     , onEdit : Expense -> parentMsg
-    , onFetchExpensesFailed : Http.Error -> parentMsg
+    , onRemoteError : Http.Error -> parentMsg
     }
 
 
@@ -18,7 +18,7 @@ type alias Translator parentMsg =
 
 
 translator : TranslationDictionary parentMsg -> Translator parentMsg
-translator { onInternalMessage, onEdit, onFetchExpensesFailed } msg =
+translator { onInternalMessage, onEdit, onRemoteError } msg =
     case msg of
         ForSelf internal ->
             onInternalMessage internal
@@ -26,8 +26,8 @@ translator { onInternalMessage, onEdit, onFetchExpensesFailed } msg =
         ForParent (Edit expense) ->
             onEdit expense
 
-        ForParent (FetchExpensesFailed error) ->
-            onFetchExpensesFailed error
+        ForParent (RemoteError error) ->
+            onRemoteError error
 
 
 never : Never -> a

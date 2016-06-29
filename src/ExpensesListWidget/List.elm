@@ -52,6 +52,7 @@ viewHeader widget fields =
                     )
                     fields
                )
+            ++ [ th [] [] ]
         )
 
 
@@ -73,6 +74,11 @@ editIcon expense =
     a [ class "ui labeled button", onClick (ForParent (Edit expense)) ] [ i [ class "ui edit icon" ] [] ]
 
 
+deleteIcon : Expense -> Html Msg
+deleteIcon expense =
+    a [ class "ui labeled button", onClick (ForSelf (Delete expense)) ] [ i [ class "ui remove red icon" ] [] ]
+
+
 viewRow : Expense -> Html Msg
 viewRow expense =
     tr []
@@ -83,4 +89,5 @@ viewRow expense =
         , td [] [ text <| String.join "," expense.for ]
         , td [] [ text <| toString expense.paidBy ]
         , td [] [ text <| String.join "," expense.categories ]
+        , td [] [ deleteIcon expense ]
         ]

@@ -147,14 +147,14 @@ update msg model =
                 , Cmd.none
                 )
 
-        FetchExpensesFailed error ->
+        RemoteError error ->
             ( { model
                 | flashMessages =
                     model.flashMessages
                         ++ [ { type' = FlashMessages.Error
                              , dismissable = True
                              , icon = Just "remove"
-                             , title = "Can't fetch expenses"
+                             , title = "An error occured on the server"
                              , shownFor = Nothing
                              , body = Just (text <| toString error)
                              }

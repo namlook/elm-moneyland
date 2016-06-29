@@ -4,7 +4,7 @@ import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 import Types exposing (Expense)
 import Date
-import ExpensesListWidget.Remote exposing (fetchExpensesBy)
+import ExpensesListWidget.Remote exposing (fetchExpensesBy, deleteExpense)
 import ExpensesListWidget.Translator exposing (generateParentMsg)
 
 
@@ -47,11 +47,23 @@ update msg model =
             ( { model | expenses = expenses }, Cmd.none )
 
         FetchExpensesFail error ->
-            let
-                _ =
-                    Debug.log "fetch fail" error
-            in
-                ( model, generateParentMsg (FetchExpensesFailed error) )
+            ( model, generateParentMsg (RemoteError error) )
+
+        Delete expense ->
+            case expense.id of
+                Just expenseId ->
+                    ( model, Cmd.map ForSelf <| deleteExpense expenseId )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        DeleteExpenseFail error ->
+            ( model, generateParentMsg (RemoteError error) )
+
+        DeleteExpenseDone a ->
+            ( model
+            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            )
 
         ToggleSorting fieldname ->
             if (List.all (\n -> n /= fieldname) [ "title", "amount", "date" ]) then
@@ -65,5 +77,5 @@ update msg model =
                         switchOrder model fieldname
                 in
                     ( { model | sortBy = sortBy, order = order }
-                    , Cmd.map ForSelf (fetchExpensesBy fieldname order)
+                    , Cmd.map ForSelf (fetchExpensesBy sortBy order)
                     )

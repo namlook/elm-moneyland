@@ -10,7 +10,7 @@ expensesListWidgetTranslator =
     ExpensesListWidget.Translator.translator
         { onInternalMessage = ExpensesListWidgetMsg
         , onEdit = Edit
-        , onFetchExpensesFailed = FetchExpensesFailed
+        , onRemoteError = RemoteError
         }
 
 

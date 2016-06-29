@@ -6,13 +6,16 @@ import Http
 
 type InternalMsg
     = ToggleSorting String
+    | Delete Expense
     | FetchExpensesFail Http.Error
     | FetchExpensesDone (List Expense)
+    | DeleteExpenseFail Http.Error
+    | DeleteExpenseDone {}
 
 
 type OutMsg
     = Edit Expense
-    | FetchExpensesFailed Http.Error
+    | RemoteError Http.Error
 
 
 type Msg

@@ -16,4 +16,4 @@ type Msg
     | FlashMessagesMsg FlashMessages.Msg
     | Edit Expense
     | Save ExpenseFormWidget
-    | FetchExpensesFailed Http.Error
+    | RemoteError Http.Error

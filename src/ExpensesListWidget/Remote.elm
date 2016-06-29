@@ -5,7 +5,7 @@ import Task
 import Http
 import Json.Decode as Decode exposing ((:=))
 import ExpensesListWidget.Messages exposing (InternalMsg(..))
-import ExpensesListWidget.Models exposing (SortOrder(..))
+import ExpensesListWidget.Models exposing (SortOrder(..), Sorting(..))
 
 
 -- import Json.Encode as Encode
@@ -24,9 +24,17 @@ fetchAllExpenses =
     fetchExpenses "http://localhost:4000/expenses"
 
 
-fetchExpensesBy : String -> SortOrder -> Cmd InternalMsg
-fetchExpensesBy fieldname sortOrder =
+fetchExpensesBy : Sorting -> SortOrder -> Cmd InternalMsg
+fetchExpensesBy sortBy sortOrder =
     let
+        fieldname =
+            case sortBy of
+                SortingField fieldname ->
+                    fieldname
+
+                NoSorting ->
+                    ""
+
         order =
             case sortOrder of
                 Asc ->
@@ -36,6 +44,23 @@ fetchExpensesBy fieldname sortOrder =
                     "DESC"
     in
         fetchExpenses ("http://localhost:4000/expenses?_sort=" ++ fieldname ++ "&_order=" ++ order)
+
+
+deleteExpenseRequest : String -> Http.Request
+deleteExpenseRequest url =
+    { verb = "DELETE", headers = [], url = url, body = Http.empty }
+
+
+deleteExpense : Int -> Cmd InternalMsg
+deleteExpense expenseId =
+    Http.send Http.defaultSettings (deleteExpenseRequest ("http://localhost:4000/expenses/" ++ (toString expenseId)))
+        |> Http.fromJson deleteExpenseDecoder
+        |> Task.perform DeleteExpenseFail DeleteExpenseDone
+
+
+deleteExpenseDecoder : Decode.Decoder {}
+deleteExpenseDecoder =
+    Decode.succeed {}
 
 
 collectionDecoder : Decode.Decoder (List Expense)
