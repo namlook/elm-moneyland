@@ -4,7 +4,7 @@ import ExpensesListWidget.Messages exposing (Msg(..), InternalMsg(..), OutMsg(..
 import ExpensesListWidget.Models exposing (ExpensesListWidget, SortOrder(..), Sorting(..))
 import Types exposing (Expense)
 import Date
-import ExpensesListWidget.Commandes exposing (fetchExpensesBy, deleteExpense)
+import ExpensesListWidget.Commandes exposing (fetchExpensesBy, deleteExpense, createExpense, updateExpense)
 import ExpensesListWidget.Translator exposing (generateParentMsg)
 
 
@@ -43,6 +43,30 @@ sortByField fieldname list =
 update : InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
 update msg model =
     case msg of
+        Add expense ->
+            case expense.id of
+                Just expenseId ->
+                    ( model, Cmd.map ForSelf <| updateExpense expenseId expense )
+
+                Nothing ->
+                    ( model, Cmd.map ForSelf <| createExpense expense )
+
+        CreateExpenseFail error ->
+            ( model, generateParentMsg (RemoteError error) )
+
+        CreateExpenseDone expense ->
+            ( model
+            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            )
+
+        UpdateExpenseFail error ->
+            ( model, generateParentMsg (RemoteError error) )
+
+        UpdateExpenseDone expense ->
+            ( model
+            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            )
+
         FetchExpensesDone expenses ->
             ( { model | expenses = expenses }, Cmd.none )
 

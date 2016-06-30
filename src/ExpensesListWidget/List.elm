@@ -87,7 +87,7 @@ viewRow expense =
         , td [] [ text <| beautifyDate expense.date ]
         , td [] [ text <| toString expense.amount ]
         , td [] [ text <| String.join "," expense.for ]
-        , td [] [ text <| toString expense.paidBy ]
+        , td [] [ text expense.paidBy ]
         , td [] [ text <| String.join "," expense.categories ]
         , td [] [ deleteIcon expense ]
         ]

@@ -2,9 +2,8 @@ module ExpensesListWidget.Json exposing (..)
 
 import Json.Decode as Decode exposing ((:=))
 import Json.Encode as Encode
-import Types exposing (Expense)
+import Types exposing (Expense, ExpenseId)
 import Date exposing (Date)
-import Time exposing (Time)
 
 
 deleteExpenseDecoder : Decode.Decoder {}
@@ -17,10 +16,12 @@ fetchExpensesDecoder =
     Decode.list fetchExpenseDecoder
 
 
+dateStringDecoder : Decode.Decoder Date
 dateStringDecoder =
     Decode.customDecoder Decode.string Date.fromString
 
 
+timeStringDecoder : Decode.Decoder Date
 timeStringDecoder =
     Decode.customDecoder Decode.float (\n -> Ok (Date.fromTime n))
 
@@ -37,9 +38,20 @@ fetchExpenseDecoder =
         ("categories" := Decode.list Decode.string)
 
 
+expenseIdEncoder : ExpenseId -> Encode.Value
+expenseIdEncoder id =
+    case id of
+        Nothing ->
+            Encode.null
+
+        Just value ->
+            Encode.int value
+
+
+expenseEncoder : Expense -> Encode.Value
 expenseEncoder expense =
     Encode.object
-        [ ( "id", Encode.string <| toString expense.id )
+        [ ( "id", expenseIdEncoder expense.id )
         , ( "date", Encode.float <| Date.toTime expense.date )
         , ( "title", Encode.string expense.title )
         , ( "amount", Encode.float expense.amount )

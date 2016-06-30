@@ -11,6 +11,11 @@ type InternalMsg
     | FetchExpensesDone (List Expense)
     | DeleteExpenseFail Http.Error
     | DeleteExpenseDone {}
+    | Add Expense
+    | CreateExpenseFail Http.Error
+    | CreateExpenseDone Expense
+    | UpdateExpenseFail Http.Error
+    | UpdateExpenseDone Expense
 
 
 type OutMsg

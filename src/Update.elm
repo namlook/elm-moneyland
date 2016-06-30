@@ -4,6 +4,7 @@ import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
 import ExpensesListWidget.Update
+import ExpensesListWidget.Messages
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
@@ -16,13 +17,23 @@ import Html exposing (text)
 
 
 toExpenseId : String -> Maybe Int
-toExpenseId id =
-    Result.toMaybe <| String.toInt id
+toExpenseId string =
+    let
+        id : Int
+        id =
+            Result.withDefault -1 <| String.toInt string
+    in
+        case id of
+            -1 ->
+                Nothing
+
+            _ ->
+                Just id
 
 
 form2expense : ExpenseForm -> Expense
 form2expense form =
-    { id = Just <| Result.withDefault -1 <| String.toInt form.id
+    { id = toExpenseId form.id
     , title = form.title
     , date = Date.fromString form.date |> Result.withDefault (Date.fromTime 0)
     , amount = Result.withDefault 0 <| String.toFloat form.amount
@@ -132,20 +143,13 @@ update msg model =
 
         Save formWidget ->
             let
-                expensesListWidget =
-                    model.expensesListWidget
-
                 newExpense =
                     form2expense formWidget.form
+
+                ( widget, cmd ) =
+                    ExpensesListWidget.Update.update (ExpensesListWidget.Messages.Add newExpense) model.expensesListWidget
             in
-                ( { model
-                    | expensesListWidget =
-                        { expensesListWidget
-                            | expenses = updateExpenses expensesListWidget.expenses newExpense
-                        }
-                  }
-                , Cmd.none
-                )
+                ( { model | expensesListWidget = widget }, Cmd.map expensesListWidgetTranslator cmd )
 
         RemoteError error ->
             ( { model
