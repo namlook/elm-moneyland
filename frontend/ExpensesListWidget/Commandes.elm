@@ -9,6 +9,11 @@ import ExpensesListWidget.Models exposing (SortOrder(..), Sorting(..))
 import ExpensesListWidget.Json exposing (fetchExpensesDecoder, deleteExpenseDecoder, fetchExpenseDecoder, expenseEncoder)
 
 
+expensesEndpoint : String
+expensesEndpoint =
+    "/api/expenses"
+
+
 fetchExpenses : String -> Cmd InternalMsg
 fetchExpenses url =
     Http.get fetchExpensesDecoder url
@@ -17,7 +22,7 @@ fetchExpenses url =
 
 fetchAllExpenses : Cmd InternalMsg
 fetchAllExpenses =
-    fetchExpenses "http://localhost:4000/expenses"
+    fetchExpenses expensesEndpoint
 
 
 fetchExpensesBy : Sorting -> SortOrder -> Cmd InternalMsg
@@ -39,14 +44,14 @@ fetchExpensesBy sortBy sortOrder =
                 Desc ->
                     "DESC"
     in
-        fetchExpenses ("http://localhost:4000/expenses?_sort=" ++ fieldname ++ "&_order=" ++ order)
+        fetchExpenses (expensesEndpoint ++ "?_sort=" ++ fieldname ++ "&_order=" ++ order)
 
 
 createExpenseRequest : Expense -> Http.Request
 createExpenseRequest expense =
     { verb = "POST"
     , headers = [ ( "Content-Type", "application/json" ) ]
-    , url = "http://localhost:4000/expenses"
+    , url = expensesEndpoint
     , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
     }
 
@@ -62,7 +67,7 @@ updateExpenseRequest : Int -> Expense -> Http.Request
 updateExpenseRequest expenseId expense =
     { verb = "PUT"
     , headers = [ ( "Content-Type", "application/json" ) ]
-    , url = "http://localhost:4000/expenses/" ++ (toString expenseId)
+    , url = expensesEndpoint ++ (toString expenseId)
     , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
     }
 
@@ -81,6 +86,6 @@ deleteExpenseRequest url =
 
 deleteExpense : Int -> Cmd InternalMsg
 deleteExpense expenseId =
-    Http.send Http.defaultSettings (deleteExpenseRequest ("http://localhost:4000/expenses/" ++ (toString expenseId)))
+    Http.send Http.defaultSettings (deleteExpenseRequest (expensesEndpoint ++ (toString expenseId)))
         |> Http.fromJson deleteExpenseDecoder
         |> Task.perform DeleteExpenseFail DeleteExpenseDone
