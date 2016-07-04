@@ -16,19 +16,14 @@ import Date
 import Html exposing (text)
 
 
-toExpenseId : String -> Maybe Int
-toExpenseId string =
-    let
-        id : Int
-        id =
-            Result.withDefault -1 <| String.toInt string
-    in
-        case id of
-            -1 ->
-                Nothing
+toExpenseId : String -> Maybe String
+toExpenseId id =
+    case id of
+        "" ->
+            Nothing
 
-            _ ->
-                Just id
+        _ ->
+            Just id
 
 
 form2expense : ExpenseForm -> Expense

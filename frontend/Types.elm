@@ -12,7 +12,7 @@ type alias Category =
 
 
 type alias ExpenseId =
-    Maybe Int
+    Maybe String
 
 
 type alias Expense =

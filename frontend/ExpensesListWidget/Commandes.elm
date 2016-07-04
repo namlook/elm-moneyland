@@ -63,16 +63,16 @@ createExpense expense =
         |> Task.perform CreateExpenseFail CreateExpenseDone
 
 
-updateExpenseRequest : Int -> Expense -> Http.Request
+updateExpenseRequest : String -> Expense -> Http.Request
 updateExpenseRequest expenseId expense =
     { verb = "PUT"
     , headers = [ ( "Content-Type", "application/json" ) ]
-    , url = expensesEndpoint ++ (toString expenseId)
+    , url = expensesEndpoint ++ "/" ++ expenseId
     , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
     }
 
 
-updateExpense : Int -> Expense -> Cmd InternalMsg
+updateExpense : String -> Expense -> Cmd InternalMsg
 updateExpense expenseId expense =
     Http.send Http.defaultSettings (updateExpenseRequest expenseId expense)
         |> Http.fromJson fetchExpenseDecoder
@@ -84,8 +84,8 @@ deleteExpenseRequest url =
     { verb = "DELETE", headers = [], url = url, body = Http.empty }
 
 
-deleteExpense : Int -> Cmd InternalMsg
+deleteExpense : String -> Cmd InternalMsg
 deleteExpense expenseId =
-    Http.send Http.defaultSettings (deleteExpenseRequest (expensesEndpoint ++ (toString expenseId)))
+    Http.send Http.defaultSettings (deleteExpenseRequest (expensesEndpoint ++ "/" ++ expenseId))
         |> Http.fromJson deleteExpenseDecoder
         |> Task.perform DeleteExpenseFail DeleteExpenseDone

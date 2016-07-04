@@ -29,7 +29,7 @@ timeStringDecoder =
 fetchExpenseDecoder : Decode.Decoder Expense
 fetchExpenseDecoder =
     Decode.object7 Expense
-        ("id" := Decode.maybe Decode.int)
+        ("id" := Decode.maybe Decode.string)
         ("date" := Decode.oneOf [ dateStringDecoder, timeStringDecoder ])
         ("title" := Decode.string)
         ("amount" := Decode.float)
@@ -45,7 +45,7 @@ expenseIdEncoder id =
             Encode.null
 
         Just value ->
-            Encode.int value
+            Encode.string value
 
 
 expenseEncoder : Expense -> Encode.Value

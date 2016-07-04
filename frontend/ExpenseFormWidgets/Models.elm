@@ -47,7 +47,7 @@ initExpenseForm =
 
 expense2form : Expense -> ExpenseForm
 expense2form expense =
-    { id = toString <| Maybe.withDefault -1 expense.id
+    { id = Maybe.withDefault "" expense.id
     , title = expense.title
     , date = toRFC3339 expense.date
     , amount = toString expense.amount
