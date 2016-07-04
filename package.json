@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:backend": "node api.js",
+    "start:backend": "node backend/api.js",
     "build:frontend": "webpack",
     "watch:frontend": "webpack --watch",
     "start:frontend": "webpack-dev-server --port 3000"
@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "Namlook <n.namlook@gmail.com>",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "css-loader": "^0.23.1",
     "elm-webpack-loader": "^3.0.3",
     "file-loader": "^0.8.5",
@@ -25,5 +25,11 @@
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "hapi": "^13.4.2",
+    "hapi-mongodb": "^6.0.0",
+    "inert": "^4.0.0",
+    "joi": "^8.4.2"
   }
 }
