@@ -1,11 +1,7 @@
 module Types exposing (..)
 
 import Date exposing (Date)
-
-
-type Authentification credentials
-    = LoggedUser credentials
-    | Anonymous
+import Components.Auth exposing (Credentials)
 
 
 type alias User =

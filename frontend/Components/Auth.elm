@@ -8,15 +8,24 @@ import Task
 import Base64
 import Json.Decode as Decode exposing ((:=))
 import Json.Encode as Encode
-import Types exposing (Authentification(Anonymous, LoggedUser))
+
+
+type InternalMsg
+    = LoginInputChanged String
+    | PasswordInputChanged String
+    | Submit FormModel
+    | TaskLoginSucceed Credentials
+    | TaskLoginFailed Http.Error
+
+
+type OutMsg
+    = LoginSucceed Credentials
+    | LoginFailed Http.Error
 
 
 type Msg
-    = LoginInputChanged String
-    | PasswordInputChanged String
-    | LoginSucceed Credentials
-    | LoginFailed Http.Error
-    | Submit FormModel
+    = ForParent OutMsg
+    | ForSelf InternalMsg
 
 
 type alias Credentials =
@@ -25,14 +34,13 @@ type alias Credentials =
     }
 
 
-
--- type Msg
---     = ForSelf InternalMsg
---     | ForParent OutMsg
+type Authentification
+    = LoggedUser Credentials
+    | Anonymous
 
 
 type alias Model =
-    { user : Authentification Credentials
+    { user : Authentification
     , form : FormModel
     , error : String
     }
@@ -82,11 +90,11 @@ view model =
             [ errorMessages model.error
             , div [ class "ui attached form segment" ]
                 [ div []
-                    [ labeledInput (LoginInputChanged) "login" "text" model.form.login
-                    , labeledInput (PasswordInputChanged) "password" "password" model.form.password
+                    [ labeledInput (ForSelf << LoginInputChanged) "login" "text" model.form.login
+                    , labeledInput (ForSelf << PasswordInputChanged) "password" "password" model.form.password
                     , button
                         [ class "ui right floated primary button"
-                        , onClick (Submit model.form)
+                        , onClick (ForSelf (Submit model.form))
                         ]
                         [ text "login" ]
                     ]
@@ -95,7 +103,7 @@ view model =
             ]
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         form =
@@ -109,18 +117,55 @@ update msg model =
                 ( { model | form = { form | password = password } }, Cmd.none )
 
             Submit form ->
-                ( model, fetchToken form )
+                ( model, Cmd.map ForSelf <| fetchToken form )
 
-            LoginSucceed credentials ->
-                ( { model | user = LoggedUser credentials }, Cmd.none )
+            TaskLoginSucceed credentials ->
+                ( model, generateParentMsg <| LoginSucceed credentials )
 
-            LoginFailed error ->
-                ( { model
-                    | error = toString error
-                    , user = Anonymous
-                  }
-                , Cmd.none
-                )
+            TaskLoginFailed error ->
+                ( model, generateParentMsg <| LoginFailed error )
+
+
+
+-- Translator
+
+
+type alias TranslationDictionary parentMsg =
+    { onInternalMessage : InternalMsg -> parentMsg
+    , onLoginSucceed : Credentials -> parentMsg
+    , onLoginFailed : Http.Error -> parentMsg
+    }
+
+
+type alias Translator parentMsg =
+    Msg -> parentMsg
+
+
+translator : TranslationDictionary parentMsg -> Translator parentMsg
+translator { onInternalMessage, onLoginSucceed, onLoginFailed } msg =
+    case msg of
+        ForSelf internal ->
+            onInternalMessage internal
+
+        ForParent (LoginSucceed credentials) ->
+            onLoginSucceed credentials
+
+        ForParent (LoginFailed error) ->
+            onLoginFailed error
+
+
+never : Never -> a
+never n =
+    never n
+
+
+generateParentMsg : OutMsg -> Cmd Msg
+generateParentMsg outMsg =
+    Task.perform never ForParent (Task.succeed outMsg)
+
+
+
+-- JSON
 
 
 tokenDecoder : Decode.Decoder Credentials
@@ -156,8 +201,8 @@ fetchTokenRequest form =
         }
 
 
-fetchToken : FormModel -> Cmd Msg
+fetchToken : FormModel -> Cmd InternalMsg
 fetchToken form =
     Http.send Http.defaultSettings (fetchTokenRequest form)
         |> Http.fromJson tokenDecoder
-        |> Task.perform LoginFailed LoginSucceed
+        |> Task.perform TaskLoginFailed TaskLoginSucceed

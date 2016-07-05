@@ -9,16 +9,15 @@ import ExpensesListWidget.List
 import ExpenseFormWidgets.Form
 import Components.NavBar as NavBar
 import Components.FlashMessages as FlashMessages
-import Components.Auth as Auth
-import Types exposing (Authentification(Anonymous, LoggedUser))
-import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
+import Components.Auth as Auth exposing (Authentification(Anonymous, LoggedUser))
+import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator, authTranslator)
 
 
 content : Model -> Html Msg
 content model =
     case model.auth.user of
         Anonymous ->
-            App.map AuthMsg (Auth.view model.auth)
+            App.map authTranslator (Auth.view model.auth)
 
         LoggedUser user ->
             div []

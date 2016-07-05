@@ -3,14 +3,14 @@ module Components.NavBar exposing (..)
 import Html exposing (Html, div, a, text, i)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Types exposing (Authentification(..))
+import Components.Auth exposing (Authentification(Anonymous))
 
 
 type Msg
     = AddExpense
 
 
-view : Authentification a -> Html Msg
+view : Authentification -> Html Msg
 view authentification =
     let
         rightMenuItems =

@@ -3,7 +3,7 @@ module Messages exposing (..)
 import ExpensesListWidget.Messages
 import ExpenseFormWidgets.Messages
 import Components.NavBar as NavBar
-import Types exposing (Expense, Authentification)
+import Types exposing (Expense)
 import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
 import Components.FlashMessages as FlashMessages
 import Components.Auth as Auth
@@ -15,8 +15,13 @@ type Msg
     | ExpenseFormWidgetMsg ExpenseFormWidgets.Messages.InternalMsg
     | NavBarMsg NavBar.Msg
     | FlashMessagesMsg FlashMessages.Msg
-    | AuthMsg Auth.Msg
     | Edit Expense
     | Save ExpenseFormWidget
     | RemoteError Http.Error
-    | UserSignedIn Authentification
+      -- authentification
+    | AuthMsg Auth.InternalMsg
+    | LoginSucceed Auth.Credentials
+
+
+
+-- | LoginFailed Http.Error

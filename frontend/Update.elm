@@ -6,7 +6,7 @@ import Html exposing (text)
 import Types exposing (Expense)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
-import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
+import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator, authTranslator)
 import ExpensesListWidget.Update
 import ExpensesListWidget.Messages
 import ExpensesListWidget.Commandes
@@ -176,7 +176,7 @@ update msg model =
                 ( widget, cmd ) =
                     Auth.update internal model.auth
             in
-                ( { model | auth = widget }, Cmd.map AuthMsg cmd )
+                ( { model | auth = widget }, Cmd.map authTranslator cmd )
 
-        UserSignedIn credentials ->
+        LoginSucceed credentials ->
             ( model, Cmd.map ExpensesListWidgetMsg ExpensesListWidget.Commandes.fetchAllExpenses )

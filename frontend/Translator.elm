@@ -3,9 +3,7 @@ module Translator exposing (..)
 import Messages exposing (Msg(..))
 import ExpensesListWidget.Translator
 import ExpenseFormWidgets.Translator
-
-
--- import Components.Auth as Auth
+import Components.Auth as Auth
 
 
 expensesListWidgetTranslator : ExpensesListWidget.Translator.Translator Msg
@@ -25,10 +23,10 @@ expenseFormWidgetTranslator =
         }
 
 
-
--- authTranslator : Auth.Translator Msg
--- authTranslator =
---     Auth.translator
---         { onInternalMessage = AuthMsg
---         , onLogin = UserSignedIn
---         }
+authTranslator : Auth.Translator Msg
+authTranslator =
+    Auth.translator
+        { onInternalMessage = AuthMsg
+        , onLoginSucceed = LoginSucceed
+        , onLoginFailed = RemoteError
+        }
