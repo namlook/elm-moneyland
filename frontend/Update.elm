@@ -1,19 +1,21 @@
 module Update exposing (..)
 
+import String
+import Date
+import Html exposing (text)
+import Types exposing (Expense)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 import Translator exposing (expensesListWidgetTranslator, expenseFormWidgetTranslator)
 import ExpensesListWidget.Update
 import ExpensesListWidget.Messages
+import ExpensesListWidget.Commandes
 import ExpenseFormWidgets.Update
 import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
-import Types exposing (Expense)
 import Components.NavBar
 import Components.FlashMessages as FlashMessages
-import String
-import Date
-import Html exposing (text)
+import Components.Auth as Auth
 
 
 toExpenseId : String -> Maybe String
@@ -168,3 +170,13 @@ update msg model =
                     FlashMessages.update internal model.flashMessages
             in
                 ( { model | flashMessages = queue }, Cmd.map FlashMessagesMsg cmd )
+
+        AuthMsg internal ->
+            let
+                ( widget, cmd ) =
+                    Auth.update internal model.auth
+            in
+                ( { model | auth = widget }, Cmd.map AuthMsg cmd )
+
+        UserSignedIn credentials ->
+            ( model, Cmd.map ExpensesListWidgetMsg ExpensesListWidget.Commandes.fetchAllExpenses )

@@ -5,6 +5,9 @@ import ExpensesListWidget.Translator
 import ExpenseFormWidgets.Translator
 
 
+-- import Components.Auth as Auth
+
+
 expensesListWidgetTranslator : ExpensesListWidget.Translator.Translator Msg
 expensesListWidgetTranslator =
     ExpensesListWidget.Translator.translator
@@ -20,3 +23,12 @@ expenseFormWidgetTranslator =
         { onInternalMessage = ExpenseFormWidgetMsg
         , onSave = Save
         }
+
+
+
+-- authTranslator : Auth.Translator Msg
+-- authTranslator =
+--     Auth.translator
+--         { onInternalMessage = AuthMsg
+--         , onLogin = UserSignedIn
+--         }

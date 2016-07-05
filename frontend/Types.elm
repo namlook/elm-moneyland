@@ -3,6 +3,11 @@ module Types exposing (..)
 import Date exposing (Date)
 
 
+type Authentification credentials
+    = LoggedUser credentials
+    | Anonymous
+
+
 type alias User =
     String
 

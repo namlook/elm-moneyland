@@ -27,7 +27,10 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "bcrypt": "^0.8.7",
     "hapi": "^13.4.2",
+    "hapi-auth-basic": "^4.2.0",
+    "hapi-auth-bearer-simple": "^4.0.1",
     "hapi-mongodb": "^6.0.0",
     "inert": "^4.0.0",
     "joi": "^8.4.2"

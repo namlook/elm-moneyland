@@ -3,20 +3,27 @@ module Components.NavBar exposing (..)
 import Html exposing (Html, div, a, text, i)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Types exposing (Authentification(..))
 
 
 type Msg
     = AddExpense
 
 
-view : Html Msg
-view =
-    div [ class "ui top fixed inverted teal menu" ]
-        [ div [ class "item" ] [ i [ class "shekel icon" ] [], text "Moneyland" ]
-        , div [ class "right menu" ]
-            [ a [ class "item", onClick AddExpense ]
-                [ i [ class "plus icon" ] []
-                , text "Add expense"
+view : Authentification a -> Html Msg
+view authentification =
+    let
+        rightMenuItems =
+            if authentification == Anonymous then
+                []
+            else
+                [ a [ class "item", onClick AddExpense ]
+                    [ i [ class "plus icon" ] []
+                    , text "Add expense"
+                    ]
                 ]
+    in
+        div [ class "ui top fixed inverted teal menu" ]
+            [ div [ class "item" ] [ i [ class "shekel icon" ] [], text "Moneyland" ]
+            , div [ class "right menu" ] rightMenuItems
             ]
-        ]
