@@ -6,6 +6,7 @@ import Types exposing (Expense)
 import Date
 import ExpensesListWidget.Commandes exposing (fetchExpensesBy, deleteExpense, createExpense, updateExpense)
 import ExpensesListWidget.Translator exposing (generateParentMsg)
+import Components.Auth exposing (Authentification)
 
 
 switchOrder : ExpensesListWidget -> String -> SortOrder
@@ -40,23 +41,23 @@ sortByField fieldname list =
             list
 
 
-update : InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
-update msg model =
+update : Authentification -> InternalMsg -> ExpensesListWidget -> ( ExpensesListWidget, Cmd Msg )
+update auth msg model =
     case msg of
         Add expense ->
             case expense.id of
                 Just expenseId ->
-                    ( model, Cmd.map ForSelf <| updateExpense expenseId expense )
+                    ( model, Cmd.map ForSelf <| updateExpense auth expenseId expense )
 
                 Nothing ->
-                    ( model, Cmd.map ForSelf <| createExpense expense )
+                    ( model, Cmd.map ForSelf <| createExpense auth expense )
 
         CreateExpenseFail error ->
             ( model, generateParentMsg (RemoteError error) )
 
         CreateExpenseDone expense ->
             ( model
-            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            , Cmd.map ForSelf <| fetchExpensesBy auth model.sortBy model.order
             )
 
         UpdateExpenseFail error ->
@@ -64,7 +65,7 @@ update msg model =
 
         UpdateExpenseDone expense ->
             ( model
-            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            , Cmd.map ForSelf <| fetchExpensesBy auth model.sortBy model.order
             )
 
         FetchExpensesDone expenses ->
@@ -76,7 +77,7 @@ update msg model =
         Delete expense ->
             case expense.id of
                 Just expenseId ->
-                    ( model, Cmd.map ForSelf <| deleteExpense expenseId )
+                    ( model, Cmd.map ForSelf <| deleteExpense auth expenseId )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -86,7 +87,7 @@ update msg model =
 
         DeleteExpenseDone a ->
             ( model
-            , Cmd.map ForSelf <| fetchExpensesBy model.sortBy model.order
+            , Cmd.map ForSelf <| fetchExpensesBy auth model.sortBy model.order
             )
 
         ToggleSorting fieldname ->
@@ -100,6 +101,6 @@ update msg model =
                     order =
                         switchOrder model fieldname
                 in
-                    ( { model | sortBy = sortBy, order = order }
-                    , Cmd.map ForSelf (fetchExpensesBy sortBy order)
+                    ( { model | sortBy = Debug.log "sortBy" sortBy, order = Debug.log "order" order }
+                    , Cmd.map ForSelf (fetchExpensesBy auth sortBy order)
                     )

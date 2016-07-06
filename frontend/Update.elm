@@ -15,7 +15,7 @@ import ExpenseFormWidgets.Messages
 import ExpenseFormWidgets.Models exposing (ExpenseForm, expense2form)
 import Components.NavBar
 import Components.FlashMessages as FlashMessages
-import Components.Auth as Auth
+import Components.Auth as Auth exposing (Authentification(LoggedUser))
 
 
 toExpenseId : String -> Maybe String
@@ -110,7 +110,7 @@ update msg model =
         ExpensesListWidgetMsg internal ->
             let
                 ( widget, cmd ) =
-                    ExpensesListWidget.Update.update internal model.expensesListWidget
+                    ExpensesListWidget.Update.update model.auth.user internal model.expensesListWidget
             in
                 ( { model | expensesListWidget = widget }, Cmd.map expensesListWidgetTranslator cmd )
 
@@ -144,7 +144,7 @@ update msg model =
                     form2expense formWidget.form
 
                 ( widget, cmd ) =
-                    ExpensesListWidget.Update.update (ExpensesListWidget.Messages.Add newExpense) model.expensesListWidget
+                    ExpensesListWidget.Update.update model.auth.user (ExpensesListWidget.Messages.Add newExpense) model.expensesListWidget
             in
                 ( { model | expensesListWidget = widget }, Cmd.map expensesListWidgetTranslator cmd )
 
@@ -179,4 +179,14 @@ update msg model =
                 ( { model | auth = widget }, Cmd.map authTranslator cmd )
 
         LoginSucceed credentials ->
-            ( model, Cmd.map ExpensesListWidgetMsg ExpensesListWidget.Commandes.fetchAllExpenses )
+            let
+                auth =
+                    model.auth
+
+                user =
+                    LoggedUser credentials
+            in
+                ( { model | auth = { auth | user = user } }
+                , ExpensesListWidget.Commandes.fetchAllExpenses user
+                    |> Cmd.map ExpensesListWidgetMsg
+                )

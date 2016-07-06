@@ -7,6 +7,7 @@ import Types exposing (Expense)
 import ExpensesListWidget.Messages exposing (InternalMsg(..))
 import ExpensesListWidget.Models exposing (SortOrder(..), Sorting(..))
 import ExpensesListWidget.Json exposing (fetchExpensesDecoder, deleteExpenseDecoder, fetchExpenseDecoder, expenseEncoder)
+import Components.Auth exposing (Authentification(Anonymous, LoggedUser))
 
 
 expensesEndpoint : String
@@ -14,19 +15,39 @@ expensesEndpoint =
     "/api/expenses"
 
 
-fetchExpenses : String -> Cmd InternalMsg
-fetchExpenses url =
-    Http.get fetchExpensesDecoder url
-        |> Task.perform FetchExpensesFail FetchExpensesDone
+auth2headers : Authentification -> List ( String, String )
+auth2headers auth =
+    case auth of
+        Anonymous ->
+            []
+
+        LoggedUser credentials ->
+            [ ( "Authorization", "Bearer " ++ credentials.token ) ]
 
 
-fetchAllExpenses : Cmd InternalMsg
-fetchAllExpenses =
-    fetchExpenses expensesEndpoint
+fetchExpenses : Authentification -> String -> Cmd InternalMsg
+fetchExpenses auth url =
+    let
+        request =
+            { verb = "GET"
+            , headers =
+                [ ( "Content-Type", "application/json" ) ] ++ Debug.log "token" (auth2headers auth)
+            , url = url
+            , body = Http.empty
+            }
+    in
+        Http.send Http.defaultSettings request
+            |> Http.fromJson fetchExpensesDecoder
+            |> Task.perform FetchExpensesFail FetchExpensesDone
 
 
-fetchExpensesBy : Sorting -> SortOrder -> Cmd InternalMsg
-fetchExpensesBy sortBy sortOrder =
+fetchAllExpenses : Authentification -> Cmd InternalMsg
+fetchAllExpenses auth =
+    fetchExpenses auth expensesEndpoint
+
+
+fetchExpensesBy : Authentification -> Sorting -> SortOrder -> Cmd InternalMsg
+fetchExpensesBy auth sortBy sortOrder =
     let
         fieldname =
             case sortBy of
@@ -43,49 +64,53 @@ fetchExpensesBy sortBy sortOrder =
 
                 Desc ->
                     "DESC"
+
+        url =
+            Debug.log "url" (expensesEndpoint ++ "?_sort=" ++ fieldname ++ "&_order=" ++ order)
     in
-        fetchExpenses (expensesEndpoint ++ "?_sort=" ++ fieldname ++ "&_order=" ++ order)
+        fetchExpenses auth url
 
 
-createExpenseRequest : Expense -> Http.Request
-createExpenseRequest expense =
-    { verb = "POST"
-    , headers = [ ( "Content-Type", "application/json" ) ]
-    , url = expensesEndpoint
-    , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
-    }
+createExpense : Authentification -> Expense -> Cmd InternalMsg
+createExpense auth expense =
+    let
+        request =
+            { verb = "POST"
+            , headers = [ ( "Content-Type", "application/json" ) ] ++ auth2headers auth
+            , url = expensesEndpoint
+            , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
+            }
+    in
+        Http.send Http.defaultSettings request
+            |> Http.fromJson fetchExpenseDecoder
+            |> Task.perform CreateExpenseFail CreateExpenseDone
 
 
-createExpense : Expense -> Cmd InternalMsg
-createExpense expense =
-    Http.send Http.defaultSettings (createExpenseRequest expense)
-        |> Http.fromJson fetchExpenseDecoder
-        |> Task.perform CreateExpenseFail CreateExpenseDone
+updateExpense : Authentification -> String -> Expense -> Cmd InternalMsg
+updateExpense auth expenseId expense =
+    let
+        request =
+            { verb = "PUT"
+            , headers = [ ( "Content-Type", "application/json" ) ] ++ auth2headers auth
+            , url = expensesEndpoint ++ "/" ++ expenseId
+            , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
+            }
+    in
+        Http.send Http.defaultSettings request
+            |> Http.fromJson fetchExpenseDecoder
+            |> Task.perform UpdateExpenseFail UpdateExpenseDone
 
 
-updateExpenseRequest : String -> Expense -> Http.Request
-updateExpenseRequest expenseId expense =
-    { verb = "PUT"
-    , headers = [ ( "Content-Type", "application/json" ) ]
-    , url = expensesEndpoint ++ "/" ++ expenseId
-    , body = Http.string <| Json.Encode.encode 1 (expenseEncoder expense)
-    }
-
-
-updateExpense : String -> Expense -> Cmd InternalMsg
-updateExpense expenseId expense =
-    Http.send Http.defaultSettings (updateExpenseRequest expenseId expense)
-        |> Http.fromJson fetchExpenseDecoder
-        |> Task.perform UpdateExpenseFail UpdateExpenseDone
-
-
-deleteExpenseRequest : String -> Http.Request
-deleteExpenseRequest url =
-    { verb = "DELETE", headers = [], url = url, body = Http.empty }
-
-
-deleteExpense : String -> Cmd InternalMsg
-deleteExpense expenseId =
-    Http.send Http.defaultSettings (deleteExpenseRequest (expensesEndpoint ++ "/" ++ expenseId))
-        |> Http.fromJson deleteExpenseDecoder
-        |> Task.perform DeleteExpenseFail DeleteExpenseDone
+deleteExpense : Authentification -> String -> Cmd InternalMsg
+deleteExpense auth expenseId =
+    let
+        request =
+            { verb = "DELETE"
+            , headers = auth2headers auth
+            , url = expensesEndpoint ++ "/" ++ expenseId
+            , body = Http.empty
+            }
+    in
+        Http.send Http.defaultSettings request
+            |> Http.fromJson deleteExpenseDecoder
+            |> Task.perform DeleteExpenseFail DeleteExpenseDone
