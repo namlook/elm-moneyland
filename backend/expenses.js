@@ -42,10 +42,10 @@ exports.routes = (server) => {
 
             const query = request.query || {};
             console.log('query>', query);
-            const order = query._order === 'DESC' ? '-' : '';
-            const sort = query._sort ? [`${order}${query._sort}`] : [];
+            const order = query._order === 'DESC' ? -1 : 1;
+            const sort = query._sort ? [{[query._sort]: order}] : [];
 
-            db.collection('expenses').find({}, {sort}).toArray((err, documents) => {
+            db.collection('expenses').find({}, sort).toArray((err, documents) => {
                 if (err) {
                     return reply(Boom.internal('Internal MongoDB error', err));
                 }
