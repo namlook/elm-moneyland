@@ -1,8 +1,8 @@
 module Components.Auth exposing (..)
 
-import Html exposing (Html, text, p, label, div, input, button)
+import Html exposing (Html, text, p, label, div, input, button, form)
 import Html.Attributes exposing (type', class, hidden, placeholder, value, hidden)
-import Html.Events exposing (onInput, onClick)
+import Html.Events exposing (onInput, onClick, onSubmit)
 import Http
 import Task
 import Base64
@@ -88,13 +88,13 @@ view model =
     in
         div []
             [ errorMessages model.error
-            , div [ class "ui attached form segment" ]
+            , form [ onSubmit (ForSelf (Submit model.form)), class "ui attached form segment" ]
                 [ div []
                     [ labeledInput (ForSelf << LoginInputChanged) "login" "text" model.form.login
                     , labeledInput (ForSelf << PasswordInputChanged) "password" "password" model.form.password
                     , button
                         [ class "ui right floated primary button"
-                        , onClick (ForSelf (Submit model.form))
+                        , type' "submit"
                         ]
                         [ text "login" ]
                     ]

@@ -2,7 +2,7 @@ module ExpenseFormWidgets.Form exposing (..)
 
 import Html exposing (Html, Attribute, div, text, label, input, form, button, a, i)
 import Html.Attributes exposing (class, type', placeholder, value, hidden, classList)
-import Html.Events exposing (onInput, onClick)
+import Html.Events exposing (onInput, onClick, onSubmit)
 import ExpenseFormWidgets.Messages exposing (Msg(..), InternalMsg(..))
 import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
 
@@ -25,7 +25,7 @@ view : ExpenseFormWidget -> Html Msg
 view model =
     div []
         [ div [ class "ui segment", hidden (not model.show) ]
-            [ div [ (class "ui form expense-form") ]
+            [ form [ onSubmit (ForSelf (Save model)), class "ui form expense-form" ]
                 [ div []
                     [ labeledInput (ForSelf << TitleChange) "title" "text" model.form.title
                     , labeledInput (ForSelf << DateChange) "date" "date" model.form.date
@@ -40,7 +40,7 @@ view model =
                         [ text "cancel" ]
                     , button
                         [ class "ui right floated primary button"
-                        , onClick (ForSelf (Save model))
+                        , type' "submit"
                         ]
                         [ text "save" ]
                     ]
