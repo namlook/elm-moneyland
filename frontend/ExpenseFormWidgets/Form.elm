@@ -2,9 +2,10 @@ module ExpenseFormWidgets.Form exposing (..)
 
 import Html exposing (Html, Attribute, div, text, label, input, form, button, a, i)
 import Html.Attributes exposing (class, type', placeholder, value, hidden, classList)
-import Html.Events exposing (onInput, onClick, onSubmit)
+import Html.Events exposing (onInput, onClick, onSubmit, onWithOptions)
 import ExpenseFormWidgets.Messages exposing (Msg(..), InternalMsg(..))
 import ExpenseFormWidgets.Models exposing (ExpenseFormWidget)
+import Json.Decode
 
 
 labeledInput : (String -> Msg) -> String -> String -> String -> Html Msg
@@ -35,7 +36,8 @@ view model =
                     , labeledInput (ForSelf << CategoriesChange) "categories" "text" model.form.categories
                     , button
                         [ class "ui right floated button"
-                        , onClick (ForSelf Cancel)
+                        , Json.Decode.succeed (ForSelf Cancel)
+                            |> onWithOptions "click" { stopPropagation = True, preventDefault = True }
                         ]
                         [ text "cancel" ]
                     , button
